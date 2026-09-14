@@ -170,7 +170,7 @@ function Home() {
           loop
           playsInline
         >
-          <source src="/videos/property-1.mp4" type="video/mp4" />
+          <source src="/videos/property-1 .mp4" type="video/mp4" />
         </video>
 
         <div className="hero-overlay"></div>
