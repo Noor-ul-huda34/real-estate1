@@ -1,151 +1,194 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
+  Heart,
+  ChevronDown,
   Menu,
   X,
-  Heart,
-  UserRound,
-  LogOut,
 } from "lucide-react";
 
 function Navbar() {
   const navigate = useNavigate();
 
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [buyOpen, setBuyOpen] = useState(false);
+  const [rentOpen, setRentOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const [user, setUser] = useState(() => {
-    const savedUser = localStorage.getItem("estatehub_user");
-
-    try {
-      return savedUser ? JSON.parse(savedUser) : null;
-    } catch {
-      return null;
-    }
-  });
-
-  const handleLogout = () => {
-    localStorage.removeItem("estatehub_user");
-    setUser(null);
-    setUserMenuOpen(false);
-    navigate("/");
-  };
-
-  const handleMenuLink = (path) => {
-    setMenuOpen(false);
-    setUserMenuOpen(false);
+  const handleNavigate = (path) => {
+    setBuyOpen(false);
+    setRentOpen(false);
+    setMobileMenuOpen(false);
     navigate(path);
   };
 
   return (
     <header className="otm-header">
 
-      {/* LEFT */}
-      <button
-        className="agent-link"
-        onClick={() =>
-          handleMenuLink("/agents")
-        }
-      >
-        Find an agent
-      </button>
-
       {/* LOGO */}
       <Link to="/" className="estate-logo">
         <span className="logo-symbol">✓</span>
-        EstateHub
+        <span>EstateHub</span>
       </Link>
 
-      {/* RIGHT */}
+      {/* CENTER NAVIGATION */}
+      <nav className="main-navigation">
+
+        {/* BUY */}
+        <div className="nav-dropdown">
+          <button
+            className="nav-link"
+            onClick={() => {
+              setBuyOpen(!buyOpen);
+              setRentOpen(false);
+            }}
+          >
+            <span>Buy</span>
+            <ChevronDown size={15} />
+          </button>
+
+          {buyOpen && (
+            <div className="nav-dropdown-menu">
+
+              <button
+                onClick={() =>
+                  handleNavigate("/properties?type=buy")
+                }
+              >
+                All Properties
+              </button>
+
+              <button
+                onClick={() =>
+                  handleNavigate(
+                    "/properties?type=buy&property=house"
+                  )
+                }
+              >
+                Houses
+              </button>
+
+              <button
+                onClick={() =>
+                  handleNavigate(
+                    "/properties?type=buy&property=apartment"
+                  )
+                }
+              >
+                Apartments
+              </button>
+
+            </div>
+          )}
+        </div>
+
+        {/* RENT */}
+        <div className="nav-dropdown">
+          <button
+            className="nav-link"
+            onClick={() => {
+              setRentOpen(!rentOpen);
+              setBuyOpen(false);
+            }}
+          >
+            <span>Rent</span>
+            <ChevronDown size={15} />
+          </button>
+
+          {rentOpen && (
+            <div className="nav-dropdown-menu">
+
+              <button
+                onClick={() =>
+                  handleNavigate("/properties?type=rent")
+                }
+              >
+                All Rentals
+              </button>
+
+              <button
+                onClick={() =>
+                  handleNavigate(
+                    "/properties?type=rent&property=house"
+                  )
+                }
+              >
+                Houses
+              </button>
+
+              <button
+                onClick={() =>
+                  handleNavigate(
+                    "/properties?type=rent&property=apartment"
+                  )
+                }
+              >
+                Apartments
+              </button>
+
+            </div>
+          )}
+        </div>
+
+        {/* FIND AN AGENT */}
+        <button
+          className="nav-link agent-nav-link"
+          onClick={() =>
+            handleNavigate("/agents")
+          }
+        >
+          Find an Agent
+        </button>
+
+      </nav>
+
+      {/* RIGHT SIDE */}
       <div className="header-right">
 
-        {/* SAVED */}
+        {/* SAVED PROPERTIES */}
         <button
           className="header-heart"
           onClick={() =>
-            handleMenuLink("/saved")
+            handleNavigate("/saved")
           }
           aria-label="Saved properties"
         >
-          <Heart size={20} />
+          <Heart size={21} />
         </button>
 
-        {/* USER / SIGN IN */}
-        {user ? (
-          <div className="user-area">
+        {/* SIGN IN / REGISTER */}
+        <Link
+          to="/signin"
+          className="signin-button"
+        >
+          Sign in/Register
+        </Link>
 
-            <button
-              className="user-button"
-              onClick={() =>
-                setUserMenuOpen(!userMenuOpen)
-              }
-            >
-              <UserRound size={18} />
-
-              <span>
-                {user.name}
-              </span>
-            </button>
-
-            {userMenuOpen && (
-              <div className="user-dropdown">
-
-                <button
-                  onClick={() =>
-                    handleMenuLink("/saved")
-                  }
-                >
-                  <Heart size={17} />
-                  Saved properties
-                </button>
-
-                <button
-                  onClick={handleLogout}
-                >
-                  <LogOut size={17} />
-                  Logout
-                </button>
-
-              </div>
-            )}
-
-          </div>
-        ) : (
-          <Link
-            to="/signin"
-            className="signin-button"
-          >
-            Sign in/Register
-          </Link>
-        )}
-
-        {/* MENU */}
+        {/* MOBILE MENU */}
         <button
-          className="menu-button"
+          className="mobile-menu-button"
           onClick={() => {
-            setMenuOpen(!menuOpen);
-            setUserMenuOpen(false);
+            setMobileMenuOpen(!mobileMenuOpen);
+            setBuyOpen(false);
+            setRentOpen(false);
           }}
           aria-label="Menu"
         >
-          {menuOpen ? (
-            <X size={30} />
+          {mobileMenuOpen ? (
+            <X size={28} />
           ) : (
-            <Menu size={30} />
+            <Menu size={28} />
           )}
         </button>
 
       </div>
 
-      {/* MAIN MENU */}
-      {menuOpen && (
-        <div className="header-menu">
+      {/* MOBILE NAVIGATION */}
+      {mobileMenuOpen && (
+        <div className="mobile-navigation">
 
           <button
             onClick={() =>
-              handleMenuLink(
-                "/properties?type=buy"
-              )
+              handleNavigate("/properties?type=buy")
             }
           >
             Buy
@@ -153,9 +196,7 @@ function Navbar() {
 
           <button
             onClick={() =>
-              handleMenuLink(
-                "/properties?type=rent"
-              )
+              handleNavigate("/properties?type=rent")
             }
           >
             Rent
@@ -163,15 +204,7 @@ function Navbar() {
 
           <button
             onClick={() =>
-              handleMenuLink("/properties")
-            }
-          >
-            Properties
-          </button>
-
-          <button
-            onClick={() =>
-              handleMenuLink("/agents")
+              handleNavigate("/agents")
             }
           >
             Find an Agent
@@ -179,31 +212,19 @@ function Navbar() {
 
           <button
             onClick={() =>
-              handleMenuLink("/saved")
+              handleNavigate("/saved")
             }
           >
             Saved Properties
           </button>
 
-          {!user && (
-            <button
-              className="menu-signin"
-              onClick={() =>
-                handleMenuLink("/signin")
-              }
-            >
-              Sign in / Register
-            </button>
-          )}
-
-          {user && (
-            <button
-              className="menu-logout"
-              onClick={handleLogout}
-            >
-              Logout
-            </button>
-          )}
+          <button
+            onClick={() =>
+              handleNavigate("/signin")
+            }
+          >
+            Sign in / Register
+          </button>
 
         </div>
       )}
@@ -213,3 +234,4 @@ function Navbar() {
 }
 
 export default Navbar;
+
